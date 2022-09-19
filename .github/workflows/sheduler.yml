@@ -1,0 +1,10 @@
+name: sheduler
+on:
+  schedule:
+    - cron: '0 9 * * *'
+
+jobs:
+  sintyoku:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo '進捗どうですか'
