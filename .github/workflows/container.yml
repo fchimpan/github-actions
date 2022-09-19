@@ -1,0 +1,10 @@
+name: container
+on: push
+
+jobs:
+  container-test:
+    runs-on: ubuntu-latest
+    container: go:latest
+    steps:
+    - name: go version
+      run: go version
