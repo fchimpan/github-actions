@@ -1,2 +1,2 @@
 # github-actions
-GitHub Actionsをいじいじする
+GitHub Actions Playground
