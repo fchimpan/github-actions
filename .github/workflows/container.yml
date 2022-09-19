@@ -4,7 +4,7 @@ on: push
 jobs:
   container-test:
     runs-on: ubuntu-latest
-    container: go:latest
+    container: golang:latest
     steps:
     - name: go version
       run: go version
