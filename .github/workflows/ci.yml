@@ -7,17 +7,23 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: 
-        go: [1.18, 1.19]
+        go-version: [1.17, 1.18, 1.19]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set Up golang
         uses: actions/setup-go@v3
         with:
-          go-version: ${{ matrix.go }}
+          go-version: ${{ matrix.go-version }}
       - name: go test
-        run: go test ./fizzbuzz
-
+        run: |
+          go test ./fizzbuzz -json > TestResults-${{ matrix.go-version }}.json
+      - name: Upload go test result
+        uses: actions/upload-artifact@v3
+        with: # name で指定した名前で path のファイルをアーティファクトに保存する
+          name: Go-results-${{ matrix.go-version }}
+          path: TestResults-${{ matrix.go-version }}.json
+          
   lint:
     name: lint
     runs-on: ubuntu-latest
