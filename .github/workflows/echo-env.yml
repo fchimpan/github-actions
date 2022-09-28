@@ -1,4 +1,4 @@
-name: echo-env
+name: set debug
 
 on: push
 
@@ -6,8 +6,8 @@ jobs:
   echo-env:
       runs-on: ubuntu-latest
       steps:
-        - name: set env
+        - name: set debug
           run: |
-            echo "::set-env name=HOGE::hoge"
+            echo "::debug::Debug Message!!"
             env
           
