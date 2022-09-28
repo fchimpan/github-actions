@@ -1,0 +1,13 @@
+name: echo-env
+
+on: push
+
+jobs:
+  echo-env:
+      runs-on: ubuntu-latest
+      steps:
+        - name: set env
+          run: |
+            echo "::set-env name=HOGE::hoge"
+            env
+          
