@@ -1,3 +1,5 @@
+name: repository_dispatch
+
 on: repository_dispatch
 
 jobs:
