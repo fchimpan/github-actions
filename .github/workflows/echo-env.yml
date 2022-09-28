@@ -1,0 +1,13 @@
+name: set debug
+
+on: push
+
+jobs:
+  echo-env:
+      runs-on: ubuntu-latest
+      steps:
+        - name: set debug
+          run: |
+            echo "::debug::Debug Message!!"
+            env
+          
