@@ -10,4 +10,12 @@ jobs:
           run: |
             echo "::debug::Debug Message!!"
             env
-          
+  set-output:
+      runs-on: ubuntu-latest
+      steps:
+        - id: set-output-step-test
+          name: set-output
+          run: |
+            echo ":output=hogehoge >> $GITHUB_OUTPUT"
+        - run:
+            echo "${{ steps.set-output-step-test.outputs.output }}"
