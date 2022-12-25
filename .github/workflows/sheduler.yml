@@ -7,4 +7,6 @@ jobs:
   sintyoku:
     runs-on: ubuntu-latest
     steps:
-      - run: echo '進捗どうですか'
+      - run: |
+          echo '進捗どうですか'
+          date
