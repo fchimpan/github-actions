@@ -16,6 +16,6 @@ jobs:
         - id: set-output-step-test
           name: set-output
           run: |
-            echo "::set-output name=output::hogehoge"
+            echo "output=hogehoge" >> $GITHUB_OUTPUT
         - run:
             echo "${{ steps.set-output-step-test.outputs.output }}"
