@@ -1,12 +1,25 @@
 name: CI
-on: [push,pull_request]
-  
+on: [push, pull_request]
+
 jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          config: ${{ vars.PERMISSIONS_CONFIG }}
+
+  monitor-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          config: ${{ vars.PERMISSIONS_CONFIG_DEGUB }}
   unit-test:
     name: test
     runs-on: ubuntu-latest
     strategy:
-      matrix: 
+      matrix:
         go: [1.18, 1.19]
     steps:
       - name: Checkout
@@ -22,6 +35,10 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
+      - name: permission-monitor-debug
+        uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          config: ${{ vars.PERMISSIONS_CONFIG_DEGUB }}
       - name: Checkout
         uses: actions/checkout@v3
       - name: golangci-lint
