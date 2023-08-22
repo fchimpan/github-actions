@@ -1,4 +1,4 @@
-name: disc-check
+name: disk-check
 on: workflow_dispatch
   
 
@@ -7,3 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: df -h
+  create-file:
+    runs-on: ubuntu-latest
+    steps:
+      - run: fallocate -l 20G output_file
+      - run: df -h
+
