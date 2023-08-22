@@ -1,0 +1,9 @@
+name: disc-check
+on: workflow_dispatch
+  
+
+jobs:
+  df:
+    runs-on: ubuntu-latest
+    steps:
+      - run: df -h
