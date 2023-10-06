@@ -10,4 +10,20 @@ jobs:
       - uses: actions/checkout@v4
       - name: List files changed
         run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
+
+  check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      contains-hoge: ${{ steps.check-diff.outputs.contains-hoge }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check branch
+        run: |
+          git branch -a
+      - name: Check if diff contains hoge
+        id: check-diff
+        run: |
+          git diff --name-only origin/main...HEAD
