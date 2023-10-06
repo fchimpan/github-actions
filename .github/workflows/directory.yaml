@@ -20,12 +20,12 @@ jobs:
       - name: Check if diff contains hoge
         id: check-diff
         run: |
-          changed_file=$(git diff --name-only origin/main..HEAD | grep ${{ matrix.file}} || true)
+          changed_file=$(git diff --name-only origin/main..HEAD | grep ${{ matrix.file }} || true)
           if [ -n "$changed_file" ]; then
           directory=$(dirname "$changed_file")
           echo "Moving to directory $directory"
           cd "$directory"
           pwd
           else
-          echo "hoge.md was not changed. Skipping this step."
+          echo ${{ matrix.file }} was not changed. Skipping this step."
           fi
