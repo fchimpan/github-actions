@@ -4,17 +4,11 @@ on:
   - push
 
 jobs:
-  list-changes-files:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: List files changed
-        run: |
-
   check_changes:
     runs-on: ubuntu-latest
-    outputs:
-      contains-hoge: ${{ steps.check-diff.outputs.contains-hoge }}
+    strategy:
+      matrix:
+        file: [file1, file2, file3, file4]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,4 +20,12 @@ jobs:
       - name: Check if diff contains hoge
         id: check-diff
         run: |
-          git diff --name-only origin/main...HEAD
+          changed_file=$(git diff --name-only origin/main..HEAD | grep ${{ matrix.file}} || true)
+          if [ -n "$changed_file" ]; then
+          directory=$(dirname "$changed_file")
+          echo "Moving to directory $directory"
+          cd "$directory"
+          pwd
+          else
+          echo "hoge.md was not changed. Skipping this step."
+          fi
