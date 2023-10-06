@@ -22,10 +22,11 @@ jobs:
         run: |
           changed_file=$(git diff --name-only origin/main..HEAD | grep ${{ matrix.file }} || true)
           if [ -n "$changed_file" ]; then
+          echo "${{ matrix.file }} was changed."
           directory=$(dirname "$changed_file")
           echo "Moving to directory $directory"
           cd "$directory"
           pwd
           else
-          echo "${{ matrix.file}} was not changed. Skipping this step."
+          echo "${{ matrix.file }} was not changed. Skipping this step."
           fi
