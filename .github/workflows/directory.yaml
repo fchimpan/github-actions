@@ -27,5 +27,5 @@ jobs:
           cd "$directory"
           pwd
           else
-          echo ${{ matrix.file }} was not changed. Skipping this step."
+          echo "${{ matrix.file}} was not changed. Skipping this step."
           fi
