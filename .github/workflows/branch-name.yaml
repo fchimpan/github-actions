@@ -1,0 +1,25 @@
+name: check branch name
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        uses: actions/checkout@v4
+      - name: echo branch name
+        run: echo ${{ github.ref }}
+      - name: Fail if not -hoge branch
+        if: ${{ !endsWith(github.ref, '-hoge') }}
+        run: echo "branch name is not -hoge"
+      - name: Fail if not -fuga branch
+        if: ${{ startsWith(github.ref, 'hoge') }}
+        run: echo "branch name is hoge-"
+      - name: github head ref
+        run: echo ${{ github.head_ref }}
+      - name: github base ref
+        run: echo ${{ github.base_ref }}
+      - name: check endswith hoge
+        run: echo ${{ endsWith(github.head_ref, '-hoge') }}
