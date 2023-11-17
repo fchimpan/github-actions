@@ -24,3 +24,5 @@ jobs:
         run: echo ${{ github.head_ref }}
       - name: github base ref
         run: echo ${{ github.base_ref }}
+      - name: check endswith hoge
+        run: echo ${{ endsWith(github.head_ref, '-hoge') }}
