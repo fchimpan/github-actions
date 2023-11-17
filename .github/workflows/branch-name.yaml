@@ -4,6 +4,7 @@ on:
     paths:
       - ".github/workflows/check-branch-name.yml"
   pull_request:
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
   check-branch-name:
@@ -19,3 +20,7 @@ jobs:
       - name: Fail if not -fuga branch
         if: ${{ startsWith(github.ref, 'hoge') }}
         run: echo "branch name is hoge-"
+      - name: github head ref
+        run: echo ${{ github.head_ref }}
+      - name: github base ref
+        run: echo ${{ github.base_ref }}
