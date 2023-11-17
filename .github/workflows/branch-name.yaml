@@ -1,8 +1,5 @@
 name: check branch name
 on:
-  push:
-    paths:
-      - ".github/workflows/check-branch-name.yml"
   pull_request:
     types: [opened, synchronize, reopened, edited]
 
