@@ -1,0 +1,21 @@
+name: check branch name
+on:
+  push:
+    paths:
+      - ".github/workflows/check-branch-name.yml"
+  pull_request:
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        uses: actions/checkout@v4
+      - name: echo branch name
+        run: echo ${{ github.ref }}
+      - name: Fail if not -hoge branch
+        if: ${{ !endsWith(github.ref, '-hoge') }}
+        run: echo "branch name is not -hoge"
+      - name: Fail if not -fuga branch
+        if: ${{ startsWith(github.ref, 'hoge') }}
+        run: echo "branch name is hoge-"
