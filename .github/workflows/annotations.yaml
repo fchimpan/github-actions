@@ -1,0 +1,19 @@
+name: View annotatinos
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  push:
+
+jobs:
+  annotatinos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Output summary
+        run: |
+          echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
+      - name: Output annotations # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#example-creating-an-annotation-for-an-error
+        run: |
+          echo "::debug file=app.js,line=1::Missing semicolon"
+          echo "::notice file=app.js,line=1::Missing semicolon"
