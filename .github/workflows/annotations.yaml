@@ -13,5 +13,5 @@ jobs:
           echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
       - name: Output annotations # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#example-creating-an-annotation-for-an-error
         run: |
-          echo "::notice notice!::"
-          echo "::debug debug!::"
+          echo "::debug hoge::Missing semicolon"
+          echo "::notice hoge::Missing semicolon"
