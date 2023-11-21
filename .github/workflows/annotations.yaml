@@ -1,0 +1,17 @@
+name: View annotatinos
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  push:
+
+jobs:
+  annotatinos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output summary
+        run: |
+          echo "Summary text :rocket: " >> $GITHUB_STEP_SUMMARY
+      - name: Output annotations # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#example-creating-an-annotation-for-an-error
+        run: |
+          echo "::notice notice!"
+          echo "::debug debug!"
