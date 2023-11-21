@@ -10,8 +10,8 @@ jobs:
     steps:
       - name: Output summary
         run: |
-          echo "Summary text :rocket: " >> $GITHUB_STEP_SUMMARY
+          echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
       - name: Output annotations # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#example-creating-an-annotation-for-an-error
         run: |
-          echo "::notice notice!"
-          echo "::debug debug!"
+          echo "::notice notice!::"
+          echo "::debug debug!::"
