@@ -10,16 +10,12 @@ jobs:
       - name: Check branch name
         uses: actions/checkout@v4
       - name: echo branch name
-        run: echo ${{ github.ref }}
-      - name: Fail if not -hoge branch
-        if: ${{ !endsWith(github.ref, '-hoge') }}
-        run: echo "branch name is not -hoge"
-      - name: Fail if not -fuga branch
-        if: ${{ startsWith(github.ref, 'hoge') }}
-        run: echo "branch name is hoge-"
-      - name: github head ref
         run: echo ${{ github.head_ref }}
-      - name: github base ref
-        run: echo ${{ github.base_ref }}
-      - name: check endswith hoge
-        run: echo ${{ endsWith(github.head_ref, '-hoge') }}
+      # ブランチ名が Fではじまらない または -with-e2e で終わらない場合はエラー echo 'branch name is invalid'
+      # startswith と endswith と if で実装してみる
+      - name: Check branch name amd
+        if: ${{ !startsWith(github.head_ref, 'F') && !endsWith(github.head_ref, '-with-e2e') }}
+        run: echo 'branch name is valid'
+      - name: Check branch name or
+        if: ${{ !startsWith(github.head_ref, 'F') || !endsWith(github.head_ref, '-with-e2e') }}
+        run: echo 'branch name is valid'
