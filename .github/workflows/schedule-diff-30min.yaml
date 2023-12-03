@@ -3,6 +3,7 @@ name: Update Schedule Difference JSON 30 min
 on:
   schedule:
     - cron: "30 * * * *" # 毎時30分に実行
+  workflow_dispatch:
 
 jobs:
   update-json:
