@@ -19,6 +19,6 @@ jobs:
           node-version: "20.10.0"
       - name: check node version
         run: node --version
-      - uses: fchimpan/github-actions@v1.0
+      - uses: fchimpan/github-actions@v1.1
         with:
           who-to-greet: ${{ github.event.inputs.name }}
