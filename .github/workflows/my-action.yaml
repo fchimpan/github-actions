@@ -1,0 +1,16 @@
+name: test my action
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Name"
+        required: true
+        default: "World"
+jobs:
+  my-action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: fchimpan/github-actions@v1.0
+        with:
+          who-to-greet: ${{ github.event.inputs.name }}
