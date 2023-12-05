@@ -26,7 +26,7 @@ jobs:
           current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           # スケジュールされた時刻 (この例では毎時0分なので、現在の時刻から分と秒を0に設定)
-          scheduled_time=$(date -u +"%Y-%m-%dT%H:30:00Z")
+          scheduled_time=$(date -u +"%Y-%m-%dT%H:00:00Z")
 
           # 差分を計算 (秒)
           diff=$(($(date -u -d "$current_time" +"%s") - $(date -u -d "$scheduled_time" +"%s")))
