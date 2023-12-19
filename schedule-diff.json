@@ -3293,5 +3293,10 @@
     "current_time": "2023-12-19T16:35:45Z",
     "scheduled_time": "2023-12-19T16:30:00Z",
     "difference": 345
+  },
+  {
+    "current_time": "2023-12-19T17:09:10Z",
+    "scheduled_time": "2023-12-19T17:00:00Z",
+    "difference": 550
   }
 ]
