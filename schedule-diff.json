@@ -8063,5 +8063,10 @@
     "current_time": "2024-01-08T23:36:07Z",
     "scheduled_time": "2024-01-08T23:30:00Z",
     "difference": 367
+  },
+  {
+    "current_time": "2024-01-09T00:56:47Z",
+    "scheduled_time": "2024-01-09T00:00:00Z",
+    "difference": 3407
   }
 ]
