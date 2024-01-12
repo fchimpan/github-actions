@@ -7,18 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
+          shopt -s lastpipe
           echo "hoge fuga" | read -r var1 var2
           echo $var1
           echo $var2
-  pipe-with-line:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "hoge fuga" | read -r var1 var2 \
-          echo $var1 \
-          echo $var2 \
-          echo "## var1: $var1 var2: $var2" >> "$GITHUB_STEP_SUMMARY"
-
   herestring:
     runs-on: ubuntu-latest
     steps:
