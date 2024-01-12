@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          {echo "hoge fuga" | read -r var1 var2;}
+          echo "hoge fuga" | read -r var1 var2
           echo $var1
           echo $var2
   herestring:
@@ -15,5 +15,13 @@ jobs:
     steps:
       - run: |
           read -r var1 var2 <<< "echo hoge fuga"
+          echo $var1
+          echo $var2
+  tmp_output:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          tmp=$(echo "hoge fuga")
+          read -r var1 var2 < tmp
           echo $var1
           echo $var2
