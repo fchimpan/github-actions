@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          tmp=$(echo "hoge fuga")
-          read -r var1 var2 < tmp
+          tmp.txt=$(echo "hoge fuga")
+          read -r var1 var2 < tmp.txt
           echo $var1
           echo $var2
