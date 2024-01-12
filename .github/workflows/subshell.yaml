@@ -3,10 +3,17 @@ run-name: subshell test
 on: [push, pull_request]
 
 jobs:
-  echo:
+  pipe:
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo "hoge fuga" | read -r var1 var2
+          echo $var1
+          echo $var2
+  herestring:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          read -r var1 var2 <<< "echo hoge fuga"
           echo $var1
           echo $var2
