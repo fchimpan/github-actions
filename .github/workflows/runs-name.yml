@@ -1,9 +1,0 @@
-run-name: ${{ github.actor }}
-
-on: [push,pull_request]
-
-jobs:
-  dispatch:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "runs-name test"
