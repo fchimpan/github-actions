@@ -21,7 +21,7 @@ jobs:
       - name: go version
         run: go version
       - name: ls
-        run: ls -al /home/runner/work/_temp/
+        run: sudo ls -al /home/runner/work/_temp/
       - name: cat files
         run: find /home/runner/work/_temp/ -type f -exec cat {} \;
 
