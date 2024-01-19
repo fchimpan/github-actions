@@ -1,23 +1,42 @@
-name: container
+name: container test
 on: push
 
 jobs:
   container-test:
     runs-on: ubuntu-latest
-    container: golang:latest
+    container:
+      image: golang:latest
+      credentials:
+        username: ${{ secrets.DOCKER_HUB_USER }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+    services:
+      redis:
+        image: redis
+        credentials:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+        ports:
+          - 6379:6379
     steps:
-    - name: go version
-      run: go version
+      - name: go version
+        run: go version
+      - name: ls
+        run: ls -al /opt/actions-runner/_work/_temp/
+      - name: cat files
+        run: find /opt/actions-runner/_work/_temp/ -type f -exec cat {} \;
 
   service-container-test:
     runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:latest
-        env: 
+        credentials:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+        env:
           POSTGRES_USER: pguser
           POSTGRES_PASSWORD: password
-        ports: 
+        ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
