@@ -21,9 +21,9 @@ jobs:
       - name: go version
         run: go version
       - name: ls
-        run: ls -al /opt/actions-runner/_work/_temp/
+        run: ls -al /home/runner/work/_temp/
       - name: cat files
-        run: find /opt/actions-runner/_work/_temp/ -type f -exec cat {} \;
+        run: find /home/runner/work/_temp/ -type f -exec cat {} \;
 
   service-container-test:
     runs-on: ubuntu-latest
