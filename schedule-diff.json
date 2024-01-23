@@ -11498,5 +11498,10 @@
     "current_time": "2024-01-23T18:15:40Z",
     "scheduled_time": "2024-01-23T18:00:00Z",
     "difference": 940
+  },
+  {
+    "current_time": "2024-01-23T18:37:53Z",
+    "scheduled_time": "2024-01-23T18:30:00Z",
+    "difference": 473
   }
 ]
