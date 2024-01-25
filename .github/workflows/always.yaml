@@ -1,14 +1,23 @@
-name: container test
+name: always
 on: push
 
 jobs:
   service-container-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        number: [1, 2, 3]
     steps:
       - name: job1
-        run: echo "job1"
+        run: |
+          echo ${{ matrix.number }}
+          echo "job1"
       - name: job2
-        run: exit 1
+        run: |
+          echo ${{ matrix.number }}
+          exit 1
       - name: job3
         if: ${{ always() }}
-        run: echo "job3"
+        run: |
+          echo ${{ matrix.number }}
+          echo "job3"
