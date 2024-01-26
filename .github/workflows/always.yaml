@@ -2,23 +2,24 @@ name: always
 on: push
 
 jobs:
-  job1:
+  lock:
     runs-on: ubuntu-latest
     steps:
-      - name: job1
+      - name: lock
         run: |
-          echo "job1"
-  job2:
+          echo "lock"
+  test:
     runs-on: ubuntu-latest
+    needs: lock
     steps:
-      - name: job2
+      - name: test
         run: |
           exit 1
-  job3:
+  unlock:
     runs-on: ubuntu-latest
-    needs: [job1, job2]
+    needs: [lock, test]
     if: always()
     steps:
-      - name: job3
+      - name: unlock
         run: |
-          echo "job3"
+          echo "unlock"
