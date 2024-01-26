@@ -4,20 +4,15 @@ on: push
 jobs:
   service-container-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        number: [1, 2, 3]
     steps:
       - name: job1
         run: |
-          echo ${{ matrix.number }}
           echo "job1"
       - name: job2
         run: |
-          echo ${{ matrix.number }}
           exit 1
       - name: job3
-        if: ${{ always() }}
+        if: always()
+        needs: [job1, job2]
         run: |
-          echo ${{ matrix.number }}
           echo "job3"
