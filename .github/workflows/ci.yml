@@ -41,6 +41,8 @@ jobs:
           config: ${{ vars.PERMISSIONS_CONFIG_DEGUB }}
       - name: Checkout
         uses: actions/checkout@v3
+      - name: monitor debug
+        uses: catchpoint/workflow-telemetry-action@6705383eabd01833acfe8412ec697384830e1455 #1.8.7
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
