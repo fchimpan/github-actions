@@ -18433,5 +18433,10 @@
     "current_time": "2024-02-22T02:35:38Z",
     "scheduled_time": "2024-02-22T02:30:00Z",
     "difference": 338
+  },
+  {
+    "current_time": "2024-02-22T03:12:27Z",
+    "scheduled_time": "2024-02-22T03:00:00Z",
+    "difference": 747
   }
 ]
