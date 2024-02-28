@@ -19948,5 +19948,10 @@
     "current_time": "2024-02-28T12:20:12Z",
     "scheduled_time": "2024-02-28T12:00:00Z",
     "difference": 1212
+  },
+  {
+    "current_time": "2024-02-28T12:45:53Z",
+    "scheduled_time": "2024-02-28T12:30:00Z",
+    "difference": 953
   }
 ]
