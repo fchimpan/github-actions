@@ -5,6 +5,6 @@ jobs:
   echo-vars:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/composite-test
+      - uses: ./.github/actions/composit
         with:
           var1: "value1"
