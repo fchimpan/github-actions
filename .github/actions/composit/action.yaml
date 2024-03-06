@@ -11,6 +11,9 @@ runs:
   steps:
     - name: Echo variable
       run: |
+        hoge-hoge=${{ GITHUB_ACTOR }}
+        echo $hoge-hoge
+        echo "$hoge-hoge"
         echo ${{ inputs.var1 }}
         echo ${GITHUB_ACTOR}
         echo "${GITHUB_ACTOR}"
