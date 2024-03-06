@@ -5,6 +5,7 @@ jobs:
   echo-vars:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/composit
         with:
           var1: "value1"
