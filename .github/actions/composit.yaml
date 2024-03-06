@@ -1,0 +1,15 @@
+name: composite-test
+
+inputs:
+  var1:
+    description: var1
+    required: true
+
+steps:
+  - name: Echo variable
+    run: |
+      echo ${{ inputs.var1 }}
+      echo ${GITHUB_ACTOR}
+      echo "${GITHUB_ACTOR}"
+      echo ${{ github.actor }}
+      echo "${{ github.actor }}"
