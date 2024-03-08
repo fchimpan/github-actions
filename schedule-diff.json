@@ -21928,5 +21928,10 @@
     "current_time": "2024-03-08T00:52:21Z",
     "scheduled_time": "2024-03-08T00:00:00Z",
     "difference": 3141
+  },
+  {
+    "current_time": "2024-03-08T01:30:12Z",
+    "scheduled_time": "2024-03-08T01:30:00Z",
+    "difference": 12
   }
 ]
