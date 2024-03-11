@@ -19,4 +19,5 @@ runs:
         echo "${GITHUB_ACTOR}"
         echo ${{ github.actor }}
         echo "${{ github.actor }}"
+        echo ${ GITHUB_RUN_ID }
       shell: bash
