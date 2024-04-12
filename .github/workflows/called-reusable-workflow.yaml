@@ -1,0 +1,17 @@
+name: ♻️ called reusable workflow
+
+on:
+    workflow_call:
+      inputs:
+        title:
+          description: title of the comment
+          required: false
+          type: string
+          default: "default title"
+
+jobs:
+    job1:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Run
+          run: echo "${{ inputs.title }}"
