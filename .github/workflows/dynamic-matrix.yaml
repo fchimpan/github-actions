@@ -23,7 +23,7 @@ jobs:
             if [ ${{ fromJson(github.event.inputs.development) }} ]; then
                 environments+=('development')
             fi
-            if [ ${{ fromJson(github.event.inputs.staging) }} ]; then
+            if [ ${{ github.event.inputs.staging }} ]; then
                 environments+=('staging')
             fi
             echo $environments
@@ -36,4 +36,4 @@ jobs:
         matrix:
           environment: ${{ fromJSON(needs.check.outputs.targets).environments }}
     steps:
-        - run: echo "Deploy for ${{ needs.check.outputs.targets }}"
+        - run: echo "Deploy for ${{ fromJSON(needs.check.outputs.targets) }}"
