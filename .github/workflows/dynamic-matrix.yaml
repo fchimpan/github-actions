@@ -17,6 +17,9 @@ jobs:
     outputs:
       targets: ${{ steps.check-targets.outputs.targets }}
     steps:
+      - name: Validate inputs
+        if: ${{ !fromJson(github.event.inputs.development) && !fromJson(github.event.inputs.staging) }}
+        run: echo "At least one of environments must be true." && exit 1
       - id: check-targets
         run: |
             targets="$(jq -cn \
@@ -37,4 +40,4 @@ jobs:
         matrix:
           environment: ${{ fromJSON(needs.check.outputs.targets).environments }}
     steps:
-        - run: echo " Do something in ${{ matrix.environment }}"
+        - run: echo "Do something in ${{ matrix.environment }}"
