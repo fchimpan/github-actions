@@ -38,6 +38,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          environment: ${{ fromJSON(needs.check.outputs.targets).environments }}
+          environment: ${{ fromJSON(needs.check.outputs.targets.environments) }}
     steps:
         - run: echo "Do something in ${{ matrix.environment }}"
