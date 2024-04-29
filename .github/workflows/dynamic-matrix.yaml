@@ -30,11 +30,11 @@ jobs:
             }')
             echo "targets=${targets}" >> $GITHUB_OUTPUT
 
-  deploy:
+  execute:
     needs: check
     runs-on: ubuntu-latest
     strategy:
         matrix:
           environment: ${{ fromJSON(needs.check.outputs.targets).environments }}
     steps:
-        - run: echo "Deploy for ${{ fromJSON(needs.check.outputs.targets) }}"
+        - run: echo " Do something in ${{ matrix.environment }}"
