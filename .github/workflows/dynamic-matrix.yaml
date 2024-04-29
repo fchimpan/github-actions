@@ -31,12 +31,10 @@ jobs:
             targets="$(jq -cn \
             --argjson development ${{ inputs.development }} \
             --argjson staging ${{ inputs.staging }} \
-            '{
-                environments: [
+            '[
                 (if $development then "development" else empty end),
                 (if $staging then "staging" else empty end)
-                ]
-            }')"
+            ]')"
             echo "targets=${targets}" >> "$GITHUB_OUTPUT"
 
   execute:
@@ -44,6 +42,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          environment: ${{ fromJSON(needs.check.outputs.targets).environments }}
+          environment: ${{ fromJSON(needs.check.outputs.targets) }}
     steps:
         - run: echo "Do something in ${{ matrix.environment }}"
