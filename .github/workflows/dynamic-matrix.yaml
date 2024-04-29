@@ -16,14 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       targets: ${{ steps.check-targets.outputs.targets }}
-    steps: # inputs のうち、 true のものを 配列に追加。{"environtmnes": ["development", "staging"]} といった形式で出力
+    steps:
       - id: check-targets
         run: |
             environments=()
             if [ ${{ fromJson(github.event.inputs.development) }} ]; then
                 environments+=('development')
             fi
-            if [ ${{ github.event.inputs.staging }} ]; then
+            if [ ${{ fromJson(github.event.inputs.staging) }} ]; then
                 environments+=('staging')
             fi
             echo $environments
