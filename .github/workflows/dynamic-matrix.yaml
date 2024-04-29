@@ -20,7 +20,7 @@ jobs:
       - id: check-targets
         run: |
             targets=$(jq -cn \
-            --argjson development ${{ fromJson(github.event.inputs.development) }} \
+            --argjson development ${{ github.event.inputs.development }} \
             --argjson staging ${{ fromJson(github.event.inputs.staging) }} \
             '{
                 environments: [
