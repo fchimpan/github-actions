@@ -18,13 +18,13 @@ jobs:
       targets: ${{ steps.check-targets.outputs.targets }}
     steps:
       - name: Validate inputs
-        if: ${{ !fromJson(github.event.inputs.development) && !fromJson(github.event.inputs.staging) }}
+        if: ${{ !inputs.development && !github.event.inputs.staging }}
         run: echo "At least one of environments must be true." && exit 1
       - id: check-targets
         run: |
             targets="$(jq -cn \
-            --argjson development ${{ github.event.inputs.development }} \
-            --argjson staging ${{ github.event.inputs.staging }} \
+            --argjson development ${{ inputs.development }} \
+            --argjson staging ${{ inputs.staging }} \
             '{
                 environments: [
                 (if $development then "development" else empty end),
