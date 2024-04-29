@@ -1,0 +1,25 @@
+name: Dynamic matrix strategy
+on:
+  workflow_dispatch:
+    inputs:
+      development:
+        required: true
+        type: boolean
+        default: false
+      staging:
+        required: true
+        type: boolean
+        default: false
+      production:
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+        - run: echo "${{ github.event.inputs.development }}"
+        - run: echo "${{ github.event.inputs.staging }}"
+        - run: echo "${{ github.event.inputs.production }}"
+        - run: echo "Deploying to ${{ fromJson(github.event.inputs) }}"
