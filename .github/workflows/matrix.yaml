@@ -19,5 +19,5 @@ jobs:
       matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
     steps:
       - name: Output
-        run: ${{ needs.job1.outputs.matrix }}
+        run: "${{ needs.job1.outputs.matrix }}"
       - run: echo "Matrix - Project ${{ matrix.project }}, Config ${{ matrix.config }}"
