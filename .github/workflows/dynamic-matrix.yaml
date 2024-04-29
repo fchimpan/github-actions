@@ -17,8 +17,14 @@ jobs:
     outputs:
       targets: ${{ steps.check-targets.outputs.targets }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Echo inputs
+        run: |
+            echo "${{ toJson(inputs) }}"
+            echo "${{ toJson(github.event.inputs) }}"
       - name: Validate inputs
-        if: ${{ !inputs.development && !github.event.inputs.staging }}
+        if: ${{ !inputs.development && !inputs.staging }}
         run: echo "At least one of environments must be true." && exit 1
       - id: check-targets
         run: |
@@ -38,6 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          environment: ${{ fromJSON(needs.check.outputs.targets.environments) }}
+          environment: ${{ fromJSON(needs.check.outputs.targets).environments }}
     steps:
         - run: echo "Do something in ${{ matrix.environment }}"
