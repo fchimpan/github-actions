@@ -21,9 +21,11 @@ jobs:
         run: |
             environments=()
             if [ ${{ fromJson(github.event.inputs.development) }} ]; then
+                echo "Development is true"
                 environments+=('development')
             fi
             if [ ${{ fromJson(github.event.inputs.staging) }} ]; then
+                echo "Staging is true"
                 environments+=('staging')
             fi
             echo $environments
