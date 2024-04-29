@@ -19,13 +19,14 @@ jobs:
     steps: # inputs のうち、 true のものを 配列に追加。{"environtmnes": ["development", "staging"]} といった形式で出力
       - id: check-targets
         run: |
-            targets=()
-            if [ ${{ github.event.inputs.development }} = true ]; then
+            environments=()
+            if [ ${{ github.event.inputs.development }} ]; then
                 targets+=('development')
             fi
-            if [ ${{ github.event.inputs.staging }} = true ]; then
+            if [ ${{ github.event.inputs.staging }} ]; then
                 targets+=('staging')
             fi
+            echo $environments
             echo "targets={\"environments\": [\"${environments[*]}\"]}" >> $GITHUB_OUTPUT
 
   deploy:
