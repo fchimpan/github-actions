@@ -21,11 +21,11 @@ jobs:
         run: |
             targets=$(jq -n \
             --argjson development ${{ fromJson(github.event.inputs.development) }} \
-            --argjson development ${{ fromJson(github.event.inputs.staging) }} \
+            --argjson staging ${{ fromJson(github.event.inputs.staging) }} \
             '{
                 environments: [
                 (if $development then "development" else empty end),
-                (if $staging then "development" else empty end)
+                (if $staging then "staging" else empty end)
                 ]
             }')
             echo "targets=${targets}" >> $GITHUB_OUTPUT
