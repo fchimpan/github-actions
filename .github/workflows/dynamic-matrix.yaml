@@ -21,10 +21,10 @@ jobs:
         run: |
             environments=()
             if [ ${{ fromJson(github.event.inputs.development) }} ]; then
-                targets+=('development')
+                environments+=('development')
             fi
             if [ ${{ fromJson(github.event.inputs.staging) }} ]; then
-                targets+=('staging')
+                environments+=('staging')
             fi
             echo $environments
             echo "targets={\"environments\": [\"${environments[*]}\"]}" >> $GITHUB_OUTPUT
