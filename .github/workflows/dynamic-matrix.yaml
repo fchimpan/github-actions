@@ -10,16 +10,29 @@ on:
         required: true
         type: boolean
         default: false
-      production:
-        required: true
-        type: boolean
-        default: false
 
 jobs:
-  deploy:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.check-targets.outputs.targets }}
+    steps: # inputs のうち、 true のものを 配列に追加。{"environtmnes": ["development", "staging"]} といった形式で出力
+      - id: check-targets
+        run: |
+            targets=()
+            if [ ${{ github.event.inputs.development }} = true ]; then
+                targets+=('development')
+            fi
+            if [ ${{ github.event.inputs.staging }} = true ]; then
+                targets+=('staging')
+            fi
+            echo "targets={\"environments\": [\"${environments[*]}\"]}" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          environment: ${{ fromJSON(needs.check.outputs.targets).environments }}
     steps:
-        - run: echo "${{ github.event.inputs.development }}"
-        - run: echo "${{ github.event.inputs.staging }}"
-        - run: echo "${{ github.event.inputs.production }}"
-        - run: echo "Deploying to ${{ fromJson(github.event.inputs) }}"
+        - run: echo "Deploy for ${{ matrix.environment }}"
