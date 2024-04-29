@@ -20,10 +20,10 @@ jobs:
       - id: check-targets
         run: |
             environments=()
-            if [ ${{ github.event.inputs.development }} ]; then
+            if [ ${{ fromJson(github.event.inputs.development) }} ]; then
                 targets+=('development')
             fi
-            if [ ${{ github.event.inputs.staging }} ]; then
+            if [ ${{ fromJson(github.event.inputs.staging) }} ]; then
                 targets+=('staging')
             fi
             echo $environments
