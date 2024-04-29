@@ -25,7 +25,7 @@ jobs:
             '{
                 environments: [
                 (if $development then "development" else empty end),
-                (if $fstaging then "development" else empty end)
+                (if $staging then "development" else empty end)
                 ]
             }')
             echo "targets=${targets}" >> $GITHUB_OUTPUT
