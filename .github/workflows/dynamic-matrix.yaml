@@ -19,17 +19,16 @@ jobs:
     steps:
       - id: check-targets
         run: |
-            environments=()
-            if [ ${{ fromJson(github.event.inputs.development) }} ]; then
-                echo "Development is true"
-                environments+=('development')
-            fi
-            if [ ${{ fromJson(github.event.inputs.staging) }} ]; then
-                echo "Staging is true"
-                environments+=('staging')
-            fi
-            echo $environments
-            echo "targets={\"environments\": [\"${environments[*]}\"]}" >> $GITHUB_OUTPUT
+            targets=$(jq -n \
+            --argjson development ${{ fromJson(github.event.inputs.development) }} \
+            --argjson development ${{ fromJson(github.event.inputs.staging) }} \
+            '{
+                environments: [
+                (if $development then "development" else empty end),
+                (if $fstaging then "development" else empty end)
+                ]
+            }')
+            echo "targets=${targets}" >> $GITHUB_OUTPUT
 
   deploy:
     needs: check
