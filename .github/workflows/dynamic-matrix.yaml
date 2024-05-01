@@ -1,4 +1,4 @@
-name: Dynamic matrix strategy
+name: Dynamic matrix strategy by workflow_dispatch
 on:
   workflow_dispatch:
     inputs:
@@ -25,7 +25,7 @@ jobs:
             echo "${{ toJson(github.event.inputs) }}"
       - name: Validate inputs
         if: ${{ !inputs.development && !inputs.staging }}
-        run: echo "At least one of environments must be true." && exit 1
+        run: echo "At least one of the environments must be true." && exit 1
       - id: check-targets
         run: |
             targets="$(jq -cn \
