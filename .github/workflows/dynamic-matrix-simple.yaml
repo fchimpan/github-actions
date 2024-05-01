@@ -1,23 +1,17 @@
-name: Dynamic matrix strategy by outputs
-on:
-  push
-
+name: build
+on: push
 jobs:
-  check:
+  job1:
     runs-on: ubuntu-latest
     outputs:
-      targets: ${{ steps.generate-targets.outputs.targets }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: Do something
-        id: generate-targets
-        run: |
-          echo "targets={\"targets\":[{\"environment\":\"devlopment\"},{\"environment\":\"staging\"]}" >> $GITHUB_OUTPUT
-
-  execute:
-    needs: check
+      - id: set-matrix
+        run: echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
+  job2:
+    needs: job1
     runs-on: ubuntu-latest
     strategy:
-        matrix:
-          environment: ${{ fromJSON(needs.check.outputs.targets) }}
+      matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
     steps:
-        - run: echo "Matrix - Project ${{ matrix.environment }}"
+      - run: echo "Matrix - Project ${{ matrix.project }}, Config ${{ matrix.config }}"
