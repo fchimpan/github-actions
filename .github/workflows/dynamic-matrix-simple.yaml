@@ -1,0 +1,23 @@
+name: Dynamic matrix strategy by outputs
+on:
+  push
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.generate-targets.outputs.targets }}
+    steps:
+      - name: Do something
+        id: generate-targets
+        run: |
+          echo "targets={\"targets\":[{\"environment\":\"devlopment\"},{\"environment\":\"staging\"]}" >> $GITHUB_OUTPUT
+
+  execute:
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          environment: ${{ fromJSON(needs.check.outputs.targets) }}
+    steps:
+        - run: echo "Matrix - Project ${{ matrix.environment }}"
