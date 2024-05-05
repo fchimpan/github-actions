@@ -34733,5 +34733,10 @@
     "current_time": "2024-05-05T06:16:11Z",
     "scheduled_time": "2024-05-05T06:00:00Z",
     "difference": 971
+  },
+  {
+    "current_time": "2024-05-05T07:10:52Z",
+    "scheduled_time": "2024-05-05T07:00:00Z",
+    "difference": 652
   }
 ]
