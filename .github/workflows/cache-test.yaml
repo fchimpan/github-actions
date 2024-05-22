@@ -1,4 +1,4 @@
-name: Cache test
+name: Cache test v3
 on: 
     - push
     - workflow_dispatch
@@ -10,7 +10,7 @@ jobs:
       - name: Create test file
         run: echo "$RANDOM" > test-file
       - name: Cache test file
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: test-file
           key: ${{ runner.os }}-${{ github.run_id }}-test-file
@@ -20,7 +20,7 @@ jobs:
     needs: setup
     steps:
       - name: Restore test file
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         id: cache
         with:
           path: test-file
@@ -33,7 +33,7 @@ jobs:
     needs: setup
     steps:
       - name: Restore test file
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         id: cache
         with:
           path: test-file
@@ -47,7 +47,7 @@ jobs:
     needs: setup
     steps:
       - name: Restore test file
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         id: cache
         with:
           path: test-file
