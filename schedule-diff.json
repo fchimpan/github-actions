@@ -38003,5 +38003,10 @@
     "current_time": "2024-06-01T17:11:19Z",
     "scheduled_time": "2024-06-01T17:00:00Z",
     "difference": 679
+  },
+  {
+    "current_time": "2024-06-01T18:15:53Z",
+    "scheduled_time": "2024-06-01T18:00:00Z",
+    "difference": 953
   }
 ]
