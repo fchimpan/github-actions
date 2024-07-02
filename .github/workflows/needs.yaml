@@ -1,0 +1,31 @@
+name: needs
+on: 
+    - push
+    - workflow_dispatch
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job1
+        run: echo "job1"
+
+  job2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job2
+        run: exit 1
+
+  job3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job3
+        run: echo "job3"
+
+  needs:
+    runs-on: ubuntu-latest
+    needs: [job1, job2, job3]
+    if: ${{ failure()  }}
+    steps:
+      - name: needs
+        run: echo "needs"
