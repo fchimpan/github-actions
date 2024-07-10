@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Card</title>
+    <style>
+        table {
+            width: 300px;
+            height: 300px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            font-size: 20px;
+            width: 20%;
+            cursor: pointer;
+        }
+        .marked {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bingo Card</h1>
+    <table>
+        <tr>
+            <th>B</th>
+            <th>I</th>
+            <th>N</th>
+            <th>G</th>
+            <th>O</th>
+        </tr>
+        {{range $i, $val := index .Columns "B"}}
+        <tr>
+            {{range $col, $colVals := .Columns}}
+            <td onclick="markCell('{{ $col }}', '{{ $i }}')" class="{{if index $.Marks $col $i}}marked{{end}}">
+                {{if and (eq $col "N") (eq $i 2)}}Free{{else}}{{index $colVals $i}}{{end}}
+            </td>
+            {{end}}
+        </tr>
+        {{end}}
+    </table>
+    <script>
+        function markCell(column, index) {
+            window.location.href = '/mark?column=' + column + '&index=' + index;
+        }
+    </script>
+</body>
+</html>
