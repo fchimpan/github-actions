@@ -42603,5 +42603,10 @@
     "current_time": "2024-07-10T16:03:42Z",
     "scheduled_time": "2024-07-10T16:00:00Z",
     "difference": 222
+  },
+  {
+    "current_time": "2024-07-10T17:03:30Z",
+    "scheduled_time": "2024-07-10T17:00:00Z",
+    "difference": 210
   }
 ]
