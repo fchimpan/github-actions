@@ -43718,5 +43718,10 @@
     "current_time": "2024-07-19T23:03:36Z",
     "scheduled_time": "2024-07-19T23:00:00Z",
     "difference": 216
+  },
+  {
+    "current_time": "2024-07-20T00:13:21Z",
+    "scheduled_time": "2024-07-20T00:00:00Z",
+    "difference": 801
   }
 ]
