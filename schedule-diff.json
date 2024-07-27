@@ -44578,5 +44578,10 @@
     "current_time": "2024-07-27T03:04:26Z",
     "scheduled_time": "2024-07-27T03:00:00Z",
     "difference": 266
+  },
+  {
+    "current_time": "2024-07-27T04:03:56Z",
+    "scheduled_time": "2024-07-27T04:00:00Z",
+    "difference": 236
   }
 ]
