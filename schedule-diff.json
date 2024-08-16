@@ -46943,5 +46943,10 @@
     "current_time": "2024-08-15T23:03:47Z",
     "scheduled_time": "2024-08-15T23:00:00Z",
     "difference": 227
+  },
+  {
+    "current_time": "2024-08-16T00:13:53Z",
+    "scheduled_time": "2024-08-16T00:00:00Z",
+    "difference": 833
   }
 ]
