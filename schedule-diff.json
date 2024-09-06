@@ -49463,5 +49463,10 @@
     "current_time": "2024-09-05T23:04:06Z",
     "scheduled_time": "2024-09-05T23:00:00Z",
     "difference": 246
+  },
+  {
+    "current_time": "2024-09-06T00:14:39Z",
+    "scheduled_time": "2024-09-06T00:00:00Z",
+    "difference": 879
   }
 ]
