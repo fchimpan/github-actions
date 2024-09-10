@@ -50008,5 +50008,10 @@
     "current_time": "2024-09-10T12:06:24Z",
     "scheduled_time": "2024-09-10T12:00:00Z",
     "difference": 384
+  },
+  {
+    "current_time": "2024-09-10T13:07:28Z",
+    "scheduled_time": "2024-09-10T13:00:00Z",
+    "difference": 448
   }
 ]
