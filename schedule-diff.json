@@ -52188,5 +52188,10 @@
     "current_time": "2024-09-28T17:03:31Z",
     "scheduled_time": "2024-09-28T17:00:00Z",
     "difference": 211
+  },
+  {
+    "current_time": "2024-09-28T18:04:05Z",
+    "scheduled_time": "2024-09-28T18:00:00Z",
+    "difference": 245
   }
 ]
