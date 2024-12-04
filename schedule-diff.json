@@ -60153,5 +60153,10 @@
     "current_time": "2024-12-04T03:17:37Z",
     "scheduled_time": "2024-12-04T03:00:00Z",
     "difference": 1057
+  },
+  {
+    "current_time": "2024-12-04T04:04:56Z",
+    "scheduled_time": "2024-12-04T04:00:00Z",
+    "difference": 296
   }
 ]
