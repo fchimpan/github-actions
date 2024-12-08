@@ -60628,5 +60628,10 @@
     "current_time": "2024-12-08T02:32:43Z",
     "scheduled_time": "2024-12-08T02:00:00Z",
     "difference": 1963
+  },
+  {
+    "current_time": "2024-12-08T03:18:50Z",
+    "scheduled_time": "2024-12-08T03:00:00Z",
+    "difference": 1130
   }
 ]
