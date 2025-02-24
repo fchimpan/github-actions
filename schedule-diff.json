@@ -69968,5 +69968,10 @@
     "current_time": "2025-02-24T00:16:35Z",
     "scheduled_time": "2025-02-24T00:00:00Z",
     "difference": 995
+  },
+  {
+    "current_time": "2025-02-24T01:31:22Z",
+    "scheduled_time": "2025-02-24T01:00:00Z",
+    "difference": 1882
   }
 ]
