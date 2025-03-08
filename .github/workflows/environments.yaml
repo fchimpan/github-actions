@@ -1,0 +1,18 @@
+name: use environments
+
+on:
+  push:
+
+jobs:
+  env1:
+    runs-on: ubuntu-latest
+    environment: evn1
+    steps:
+      - name: Echo Variables
+        run: echo ${{ vars.VAR1 }}
+  env2:
+    runs-on: ubuntu-latest
+    environment: env2
+    steps:
+      - name: Echo Variables
+        run: echo ${{ vars.VAR1 }}
