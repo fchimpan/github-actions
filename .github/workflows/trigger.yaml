@@ -1,0 +1,25 @@
+name: trigger-test
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - '.github/**'
+        tags:
+            - 'v*'
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Run tests
+              run: echo "Running tests"
+    tag:
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/v')
+        steps:
+            - name: Tag
+              run: echo "Tagging"
