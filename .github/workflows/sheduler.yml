@@ -1,7 +1,7 @@
 name: sheduler
 on:
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '* * * * *'
 
 jobs:
   sintyoku:
@@ -10,3 +10,5 @@ jobs:
       - run: |
           echo '進捗どうですか'
           date
+          echo ${{ github.actor }}
+          echo ${{ github }}
