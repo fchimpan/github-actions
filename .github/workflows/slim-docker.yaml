@@ -37,3 +37,18 @@ jobs:
           echo "=== docker run test ==="
           docker run hello-world || echo "docker run failed"
 
+      - name: Show current user
+        run: |
+          echo "Current user: $(whoami)"
+          id
+
+      - name: Check if sudo exists
+        run: |
+          echo "=== Checking sudo existence ==="
+          which sudo || echo "sudo not found"
+          sudo -V || echo "sudo command not usable"
+
+      - name: Try using sudo
+        run: |
+          echo "=== Attempting sudo ==="
+          sudo ls /root || echo "sudo command failed or permission denied"
