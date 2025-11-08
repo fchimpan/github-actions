@@ -47,3 +47,157 @@ jobs:
         run: |
           echo "=== Attempting sudo ==="
           sudo ls /root || echo "sudo command failed or permission denied"
+      - uses: gacts/install-podman@v1
+      - run: podman version || echo "sudo command not usable"
+
+      - name: System info
+        run: |
+          echo "=== OS Info ==="
+          uname -a
+          cat /etc/os-release || true
+          echo ""
+          echo "=== User Info ==="
+          whoami
+          id
+          echo ""
+          echo "=== Resources ==="
+          free -h
+          nproc
+          echo ""
+
+      - name: Check container / VM tools
+        run: |
+          echo "=== Container / VM tools ==="
+          for cmd in docker podman buildah kind minikube k3d k3s lxd multipass microk8s; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but cannot run"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check Docker-related CLI tools
+        run: |
+          echo "=== Docker-related tools ==="
+          for cmd in docker-compose buildx compose-cli; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd version 2>/dev/null || echo "⚠️  $cmd exists but cannot run"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check orchestration / infra tools
+        run: |
+          echo "=== Orchestration / Infrastructure tools ==="
+          for cmd in kubectl helm terraform ansible vagrant packer chef knife puppet docker-machine; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd version 2>/dev/null || echo "⚠️  $cmd exists but restricted"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check system-level commands
+        run: |
+          echo "=== System-level / privileged commands ==="
+          for cmd in systemctl service modprobe mount umount ip iptables brctl useradd passwd adduser \
+                      groupadd sysctl lsmod insmod rmmod chroot hostnamectl; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              case $cmd in
+                ip) $cmd link show 2>/dev/null || echo "⚠️  failed to list interfaces";;
+                mount) $cmd | head -n 3 || echo "⚠️  mount listing failed";;
+                systemctl) $cmd list-units 2>/dev/null || echo "⚠️  systemctl not functional";;
+                *) $cmd --version 2>/dev/null || echo "⚠️  restricted command";;
+              esac
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check package managers and privilege tools
+        run: |
+          echo "=== Package management tools ==="
+          for cmd in sudo apt apt-get yum dnf apk zypper snap; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd --version 2>/dev/null || echo "⚠️  restricted or requires root"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check build systems and emulators
+        run: |
+          echo "=== Build systems / emulators ==="
+          for cmd in qemu qemu-system-x86_64 buildx kaniko bazel nix-build nix qemu-img make cmake ninja; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but restricted"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check language build tools
+        run: |
+          echo "=== Common language build tools ==="
+          for cmd in go java javac node npm pnpm yarn python pip gradle mvn rustc cargo dotnet; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but cannot run"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check network / low-level tools
+        run: |
+          echo "=== Network / low-level tools ==="
+          for cmd in nc netstat curl wget ping traceroute dig nslookup telnet ssh scp rsync tcpdump; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd --version 2>/dev/null || echo "⚠️  command exists but restricted"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Check miscellaneous / dev tools
+        run: |
+          echo "=== Miscellaneous developer tools ==="
+          for cmd in git gh jq yq awk sed grep make curl gzip tar unzip zip rsync; do
+            echo ">>> $cmd"
+            if command -v $cmd >/dev/null 2>&1; then
+              echo "✔️  $cmd found"
+              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but restricted"
+            else
+              echo "❌  $cmd not found"
+            fi
+            echo ""
+          done
+
+      - name: Summary
+        run: |
+          echo "=== Summary ==="
+          echo "All tool checks completed. Review logs above to determine which tools are available or restricted in ubuntu-slim."
