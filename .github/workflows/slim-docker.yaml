@@ -1,55 +1,53 @@
-name: Check Docker on ubuntu-slim
+name: Generate missing commands between ubuntu-latest and ubuntu-slim
 
 on:
-  workflow_dispatch:  # 手動実行
+  workflow_dispatch:
   push:
-    branches:
-      - main
 
+permissions:
+  contents: write  # コミットに必要
 
 jobs:
-  collect-tools-latest:
+  collect-latest:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
+    outputs:
+      artifact-name: ubuntu-latest-tools
     steps:
-      - name: List available commands
+      - name: Collect commands (ubuntu-latest)
         run: |
-          echo "=== Collecting commands for ubuntu-latest ==="
-          mkdir -p tools
-          compgen -c | sort -u > tools/ubuntu-latest.txt
-          echo "Total commands:" $(wc -l < tools/ubuntu-latest.txt)
-          head -n 20 tools/ubuntu-latest.txt
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+          echo "=== Collecting commands from ubuntu-latest ==="
+          compgen -c | sort -u > ubuntu-latest.txt
+          echo "ubuntu-latest commands: $(wc -l < ubuntu-latest.txt)"
+      - uses: actions/upload-artifact@v4
         with:
           name: ubuntu-latest-tools
-          path: tools/ubuntu-latest.txt
+          path: ubuntu-latest.txt
 
-  collect-tools-slim:
+  collect-slim:
     runs-on: ubuntu-slim
-    timeout-minutes: 10
-
+    outputs:
+      artifact-name: ubuntu-slim-tools
     steps:
-      - name: List available commands
+      - name: Collect commands (ubuntu-slim)
         run: |
-          echo "=== Collecting commands for ubuntu-slim ==="
-          mkdir -p tools
-          compgen -c | sort -u > tools/ubuntu-slim.txt
-          echo "Total commands:" $(wc -l < tools/ubuntu-slim.txt)
-          head -n 20 tools/ubuntu-slim.txt
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+          echo "=== Collecting commands from ubuntu-slim ==="
+          compgen -c | sort -u > ubuntu-slim.txt
+          echo "ubuntu-slim commands: $(wc -l < ubuntu-slim.txt)"
+      - uses: actions/upload-artifact@v4
         with:
           name: ubuntu-slim-tools
-          path: tools/ubuntu-slim.txt
+          path: ubuntu-slim.txt
 
-  compare:
-    needs: [collect-tools-latest, collect-tools-slim]
+  compare-and-commit:
+    needs: [collect-latest, collect-slim]
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
@@ -60,242 +58,42 @@ jobs:
           name: ubuntu-slim-tools
           path: slim
 
-      - name: Compare toolsets
+      - name: Compare and create JSON diff
         run: |
-          echo "=== Comparing tool lists ==="
-          sort -u latest/ubuntu-latest.txt > latest.txt
-          sort -u slim/ubuntu-slim.txt > slim.txt
-          mkdir -p diff
+          echo "=== Comparing commands ==="
+          sort -u latest/ubuntu-latest.txt > latest-sorted.txt
+          sort -u slim/ubuntu-slim.txt > slim-sorted.txt
+          comm -23 latest-sorted.txt slim-sorted.txt > missing-in-slim.txt
 
-          echo "=== Tools only in ubuntu-latest ===" | tee diff/only-latest.txt
-          comm -23 latest.txt slim.txt | tee -a diff/only-latest.txt
-          echo ""
-          echo "=== Tools only in ubuntu-slim ===" | tee diff/only-slim.txt
-          comm -13 latest.txt slim.txt | tee -a diff/only-slim.txt
-          echo ""
-          echo "=== Tools common to both ===" | tee diff/common.txt
-          comm -12 latest.txt slim.txt | tee -a diff/common.txt
+          mkdir -p data
+          echo "{" > data/missing-in-slim.json
+          awk '{printf "  \"%s\": true,\n", $1}' missing-in-slim.txt | sed '$ s/,$//' >> data/missing-in-slim.json
+          echo "}" >> data/missing-in-slim.json
 
-          echo ""
-          echo "Summary:"
-          echo "Only in latest:" $(wc -l < diff/only-latest.txt)
-          echo "Only in slim:" $(wc -l < diff/only-slim.txt)
-          echo "Common:" $(wc -l < diff/common.txt)
+          echo "=== Preview ==="
+          head -n 20 data/missing-in-slim.json
+          echo "Total missing commands: $(wc -l < missing-in-slim.txt)"
 
-      - name: Upload comparison results
+      - name: Commit and push (overwrite if exists)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "=== Committing data/missing-in-slim.json ==="
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/missing-in-slim.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: update missing-in-slim.json (auto-generated)"
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
+          echo "✅ Successfully committed."
+
+      - name: Upload artifact (for reference)
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-runner-diff
-          path: diff/
-  test-docker:
-    runs-on: ubuntu-slim  # 軽量ランナーを明示
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Check OS info
-        run: |
-          echo "=== OS Info ==="
-          uname -a
-          cat /etc/os-release || true
-
-      - name: Check if docker command exists
-        run: |
-          echo "=== docker existence check ==="
-          which docker || echo "docker not found"
-          docker --version || echo "docker command failed"
-
-      - name: Try running docker hello-world
-        run: |
-          echo "=== docker run test ==="
-          docker run hello-world || echo "docker run failed"
-
-      - name: Show current user
-        run: |
-          echo "Current user: $(whoami)"
-          id
-
-      - name: Check if sudo exists
-        run: |
-          echo "=== Checking sudo existence ==="
-          which sudo || echo "sudo not found"
-          sudo -V || echo "sudo command not usable"
-
-      - name: Try using sudo
-        run: |
-          echo "=== Attempting sudo ==="
-          sudo ls /root || echo "sudo command failed or permission denied"
-      - uses: gacts/install-podman@v1
-      - run: podman version || echo "sudo command not usable"
-
-      - name: System info
-        run: |
-          echo "=== OS Info ==="
-          uname -a
-          cat /etc/os-release || true
-          echo ""
-          echo "=== User Info ==="
-          whoami
-          id
-          echo ""
-          echo "=== Resources ==="
-          free -h
-          nproc
-          echo ""
-
-      - name: Check container / VM tools
-        run: |
-          echo "=== Container / VM tools ==="
-          for cmd in docker podman buildah kind minikube k3d k3s lxd multipass microk8s; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but cannot run"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check Docker-related CLI tools
-        run: |
-          echo "=== Docker-related tools ==="
-          for cmd in docker-compose buildx compose-cli; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd version 2>/dev/null || echo "⚠️  $cmd exists but cannot run"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check orchestration / infra tools
-        run: |
-          echo "=== Orchestration / Infrastructure tools ==="
-          for cmd in kubectl helm terraform ansible vagrant packer chef knife puppet docker-machine; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd version 2>/dev/null || echo "⚠️  $cmd exists but restricted"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check system-level commands
-        run: |
-          echo "=== System-level / privileged commands ==="
-          for cmd in systemctl service modprobe mount umount ip iptables brctl useradd passwd adduser \
-                      groupadd sysctl lsmod insmod rmmod chroot hostnamectl; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              case $cmd in
-                ip) $cmd link show 2>/dev/null || echo "⚠️  failed to list interfaces";;
-                mount) $cmd | head -n 3 || echo "⚠️  mount listing failed";;
-                systemctl) $cmd list-units 2>/dev/null || echo "⚠️  systemctl not functional";;
-                *) $cmd --version 2>/dev/null || echo "⚠️  restricted command";;
-              esac
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check package managers and privilege tools
-        run: |
-          echo "=== Package management tools ==="
-          for cmd in sudo apt apt-get yum dnf apk zypper snap; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd --version 2>/dev/null || echo "⚠️  restricted or requires root"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check build systems and emulators
-        run: |
-          echo "=== Build systems / emulators ==="
-          for cmd in qemu qemu-system-x86_64 buildx kaniko bazel nix-build nix qemu-img make cmake ninja; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but restricted"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check language build tools
-        run: |
-          echo "=== Common language build tools ==="
-          for cmd in go java javac node npm pnpm yarn python pip gradle mvn rustc cargo dotnet; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but cannot run"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check network / low-level tools
-        run: |
-          echo "=== Network / low-level tools ==="
-          for cmd in nc netstat curl wget ping traceroute dig nslookup telnet ssh scp rsync tcpdump; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd --version 2>/dev/null || echo "⚠️  command exists but restricted"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check miscellaneous / dev tools
-        run: |
-          echo "=== Miscellaneous developer tools ==="
-          for cmd in git gh jq yq awk sed grep make curl gzip tar unzip zip rsync; do
-            echo ">>> $cmd"
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✔️  $cmd found"
-              $cmd --version 2>/dev/null || echo "⚠️  $cmd exists but restricted"
-            else
-              echo "❌  $cmd not found"
-            fi
-            echo ""
-          done
-
-      - name: Check docker version (if any)
-        run: |
-          echo "=== docker version ==="
-          docker --version || echo "⚠️ docker command unavailable"
-          echo ""
-
-      - name: Run a simple docker:// action (alpine)
-        uses: docker://alpine:3.18
-        with:
-          args: echo "✅ Running inside alpine container"
-
-      - name: Run a docker:// action that fails gracefully
-        uses: docker://busybox:latest
-        with:
-          args: sh -c "echo '✅ inside busybox'; uname -a"
-
-      - name: Check workflow result interpretation
-        run: |
-          echo "=== Expected Result ==="
-          echo "If the above docker:// steps failed with 'docker not found' or 'permission denied',"
-          echo "it confirms that ubuntu-slim cannot run docker-based actions."
-          echo "If somehow they succeed, that would mean GitHub injected a special runner fix (unlikely)."
+          name: missing-in-slim
+          path: data/missing-in-slim.json
