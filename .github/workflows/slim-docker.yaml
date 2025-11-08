@@ -10,6 +10,11 @@ jobs:
   test-docker:
     runs-on: ubuntu-slim  # 軽量ランナーを明示
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
 
     steps:
       - name: Checkout
