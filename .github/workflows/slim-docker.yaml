@@ -1,0 +1,34 @@
+name: Check Docker on ubuntu-slim
+
+on:
+  workflow_dispatch:  # 手動実行
+  push:
+    branches:
+      - main
+
+jobs:
+  test-docker:
+    runs-on: ubuntu-slim  # 軽量ランナーを明示
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Check OS info
+        run: |
+          echo "=== OS Info ==="
+          uname -a
+          cat /etc/os-release || true
+
+      - name: Check if docker command exists
+        run: |
+          echo "=== docker existence check ==="
+          which docker || echo "docker not found"
+          docker --version || echo "docker command failed"
+
+      - name: Try running docker hello-world
+        run: |
+          echo "=== docker run test ==="
+          docker run hello-world || echo "docker run failed"
+
