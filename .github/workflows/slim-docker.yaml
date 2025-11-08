@@ -197,7 +197,25 @@ jobs:
             echo ""
           done
 
-      - name: Summary
+      - name: Check docker version (if any)
         run: |
-          echo "=== Summary ==="
-          echo "All tool checks completed. Review logs above to determine which tools are available or restricted in ubuntu-slim."
+          echo "=== docker version ==="
+          docker --version || echo "⚠️ docker command unavailable"
+          echo ""
+
+      - name: Run a simple docker:// action (alpine)
+        uses: docker://alpine:3.18
+        with:
+          args: echo "✅ Running inside alpine container"
+
+      - name: Run a docker:// action that fails gracefully
+        uses: docker://busybox:latest
+        with:
+          args: sh -c "echo '✅ inside busybox'; uname -a"
+
+      - name: Check workflow result interpretation
+        run: |
+          echo "=== Expected Result ==="
+          echo "If the above docker:// steps failed with 'docker not found' or 'permission denied',"
+          echo "it confirms that ubuntu-slim cannot run docker-based actions."
+          echo "If somehow they succeed, that would mean GitHub injected a special runner fix (unlikely)."
