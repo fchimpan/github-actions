@@ -201,3 +201,56 @@ jobs:
         run: |
           echo "=== Summary ==="
           echo "All tool checks completed. Review logs above to determine which tools are available or restricted in ubuntu-slim."
+            - name: Try installing Docker
+      - name: Docker Install
+        run: |
+          echo "=== Attempting Docker installation ==="
+          set -eux
+          # Update package index (will fail if no sudo/root)
+          if command -v sudo >/dev/null 2>&1; then
+            echo "Using sudo for apt..."
+            sudo apt-get update -y || echo "⚠️ apt-get update failed"
+            sudo apt-get install -y docker.io || echo "⚠️ docker installation failed"
+          else
+            echo "Running as $(whoami), no sudo available."
+            apt-get update -y || echo "⚠️ apt-get update failed"
+            apt-get install -y docker.io || echo "⚠️ docker installation failed"
+          fi
+
+      - name: Check Docker binary and version
+        run: |
+          echo "=== Check Docker binary ==="
+          if command -v docker >/dev/null 2>&1; then
+            docker --version || echo "⚠️ docker binary exists but cannot run"
+          else
+            echo "❌ docker binary not found even after installation"
+          fi
+
+      - name: Attempt to start Docker daemon
+        run: |
+          echo "=== Trying to start Docker daemon ==="
+          set -eux
+          if command -v systemctl >/dev/null 2>&1; then
+            echo "systemctl found, trying to start service..."
+            sudo systemctl start docker || echo "⚠️ systemctl start docker failed"
+          else
+            echo "systemctl not found, trying to run dockerd manually..."
+            dockerd > /tmp/dockerd.log 2>&1 &
+            sleep 5
+            if pgrep dockerd >/dev/null 2>&1; then
+              echo "⚠️ dockerd process started (unexpected)"
+            else
+              echo "✅ dockerd could not start (expected in slim)"
+            fi
+          fi
+
+      - name: Try running docker command
+        run: |
+          echo "=== Attempting docker run ==="
+          docker run hello-world || echo "❌ docker run failed (daemon likely unavailable)"
+
+      - name: Final check summary
+        run: |
+          echo "=== Summary ==="
+          echo "If 'docker run' failed with 'Cannot connect to the Docker daemon' or 'permission denied',"
+          echo "it confirms that ubuntu-slim cannot run Docker even after installation."
