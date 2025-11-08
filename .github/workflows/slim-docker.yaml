@@ -2,10 +2,9 @@ name: Generate missing commands between ubuntu-latest and ubuntu-slim
 
 on:
   workflow_dispatch:
-  push:
 
 permissions:
-  contents: write  # コミットに必要
+  contents: write
 
 jobs:
   collect-latest:
@@ -41,7 +40,6 @@ jobs:
   compare-and-commit:
     needs: [collect-latest, collect-slim]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,36 +56,33 @@ jobs:
           name: ubuntu-slim-tools
           path: slim
 
-      - name: Compare and create JSON diff
+      - name: Compare and create JSON array
         run: |
           echo "=== Comparing commands ==="
           sort -u latest/ubuntu-latest.txt > latest-sorted.txt
           sort -u slim/ubuntu-slim.txt > slim-sorted.txt
           comm -23 latest-sorted.txt slim-sorted.txt > missing-in-slim.txt
 
-          mkdir -p data
-          echo "{" > data/missing-in-slim.json
-          awk '{printf "  \"%s\": true,\n", $1}' missing-in-slim.txt | sed '$ s/,$//' >> data/missing-in-slim.json
-          echo "}" >> data/missing-in-slim.json
+          mkdir -p internal/workflow/data
+          jq -R -s 'split("\n") | map(select(length > 0))' missing-in-slim.txt > internal/workflow/data/missing-in-slim.json
 
           echo "=== Preview ==="
-          head -n 20 data/missing-in-slim.json
+          head -n 20 missing-in-slim.txt
           echo "Total missing commands: $(wc -l < missing-in-slim.txt)"
 
-      - name: Commit and push (overwrite if exists)
+      - name: Commit and push (overwrite)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "=== Committing data/missing-in-slim.json ==="
+          echo "=== Committing internal/workflow/data/missing-in-slim.json ==="
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/missing-in-slim.json
+          git add internal/workflow/data/missing-in-slim.json
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
-
           git commit -m "chore: update missing-in-slim.json (auto-generated)"
           git push origin HEAD:${GITHUB_REF#refs/heads/}
           echo "✅ Successfully committed."
@@ -96,4 +91,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: missing-in-slim
-          path: data/missing-in-slim.json
+          path: internal/workflow/data/missing-in-slim.json
