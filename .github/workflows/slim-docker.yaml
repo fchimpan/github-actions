@@ -1,45 +1,51 @@
-name: Generate missing commands between ubuntu-latest and ubuntu-slim
+name: Generate command lists for ubuntu-latest and ubuntu-slim
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write  # needed for commit and push
 
 jobs:
   collect-latest:
     runs-on: ubuntu-latest
     outputs:
-      artifact-name: ubuntu-latest-tools
+      artifact-name: ubuntu-latest-commands
     steps:
       - name: Collect commands (ubuntu-latest)
         run: |
           echo "=== Collecting commands from ubuntu-latest ==="
-          compgen -c | sort -u > ubuntu-latest.txt
-          echo "ubuntu-latest commands: $(wc -l < ubuntu-latest.txt)"
+          mkdir -p output
+          compgen -c | sort -u > output/ubuntu-latest.txt
+          echo "ubuntu-latest commands: $(wc -l < output/ubuntu-latest.txt)"
+          jq -R -s 'split("\n") | map(select(length > 0))' output/ubuntu-latest.txt > output/ubuntu-latest.json
       - uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-latest-tools
-          path: ubuntu-latest.txt
+          name: ubuntu-latest-commands
+          path: output/ubuntu-latest.json
 
   collect-slim:
     runs-on: ubuntu-slim
     outputs:
-      artifact-name: ubuntu-slim-tools
+      artifact-name: ubuntu-slim-commands
     steps:
       - name: Collect commands (ubuntu-slim)
         run: |
           echo "=== Collecting commands from ubuntu-slim ==="
-          compgen -c | sort -u > ubuntu-slim.txt
-          echo "ubuntu-slim commands: $(wc -l < ubuntu-slim.txt)"
+          mkdir -p output
+          compgen -c | sort -u > output/ubuntu-slim.txt
+          echo "ubuntu-slim commands: $(wc -l < output/ubuntu-slim.txt)"
+          jq -R -s 'split("\n") | map(select(length > 0))' output/ubuntu-slim.txt > output/ubuntu-slim.json
       - uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-slim-tools
-          path: ubuntu-slim.txt
+          name: ubuntu-slim-commands
+          path: output/ubuntu-slim.json
 
-  compare-and-commit:
+  commit-jsons:
     needs: [collect-latest, collect-slim]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,46 +55,42 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ubuntu-latest-tools
+          name: ubuntu-latest-commands
           path: latest
       - uses: actions/download-artifact@v4
         with:
-          name: ubuntu-slim-tools
+          name: ubuntu-slim-commands
           path: slim
 
-      - name: Compare and create JSON array
+      - name: Prepare data directory and move files
         run: |
-          echo "=== Comparing commands ==="
-          sort -u latest/ubuntu-latest.txt > latest-sorted.txt
-          sort -u slim/ubuntu-slim.txt > slim-sorted.txt
-          comm -23 latest-sorted.txt slim-sorted.txt > missing-in-slim.txt
-
           mkdir -p internal/workflow/data
-          jq -R -s 'split("\n") | map(select(length > 0))' missing-in-slim.txt > internal/workflow/data/missing-in-slim.json
+          mv latest/ubuntu-latest.json internal/workflow/data/ubuntu-latest.json
+          mv slim/ubuntu-slim.json internal/workflow/data/ubuntu-slim.json
+          echo "=== Preview of ubuntu-latest.json ==="
+          head -n 20 internal/workflow/data/ubuntu-latest.json
+          echo "=== Preview of ubuntu-slim.json ==="
+          head -n 20 internal/workflow/data/ubuntu-slim.json
 
-          echo "=== Preview ==="
-          head -n 20 missing-in-slim.txt
-          echo "Total missing commands: $(wc -l < missing-in-slim.txt)"
-
-      - name: Commit and push (overwrite)
+      - name: Commit and push JSONs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "=== Committing internal/workflow/data/missing-in-slim.json ==="
+          echo "=== Committing updated command lists ==="
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add internal/workflow/data/missing-in-slim.json
+          git add internal/workflow/data/ubuntu-latest.json internal/workflow/data/ubuntu-slim.json
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
-          git commit -m "chore: update missing-in-slim.json (auto-generated)"
+          git commit -m "chore: update ubuntu-latest and ubuntu-slim command lists"
           git push origin HEAD:${GITHUB_REF#refs/heads/}
-          echo "✅ Successfully committed."
+          echo "✅ Successfully committed both command lists."
 
-      - name: Upload artifact (for reference)
+      - name: Upload artifacts (for reference)
         uses: actions/upload-artifact@v4
         with:
-          name: missing-in-slim
-          path: internal/workflow/data/missing-in-slim.json
+          name: ubuntu-runner-command-lists
+          path: internal/workflow/data/
