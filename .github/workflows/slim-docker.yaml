@@ -201,7 +201,6 @@ jobs:
         run: |
           echo "=== Summary ==="
           echo "All tool checks completed. Review logs above to determine which tools are available or restricted in ubuntu-slim."
-            - name: Try installing Docker
       - name: Docker Install
         run: |
           echo "=== Attempting Docker installation ==="
