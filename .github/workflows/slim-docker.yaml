@@ -6,7 +6,87 @@ on:
     branches:
       - main
 
+
 jobs:
+  collect-tools-latest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: List available commands
+        run: |
+          echo "=== Collecting commands for ubuntu-latest ==="
+          mkdir -p tools
+          compgen -c | sort -u > tools/ubuntu-latest.txt
+          echo "Total commands:" $(wc -l < tools/ubuntu-latest.txt)
+          head -n 20 tools/ubuntu-latest.txt
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-latest-tools
+          path: tools/ubuntu-latest.txt
+
+  collect-tools-slim:
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+
+    steps:
+      - name: List available commands
+        run: |
+          echo "=== Collecting commands for ubuntu-slim ==="
+          mkdir -p tools
+          compgen -c | sort -u > tools/ubuntu-slim.txt
+          echo "Total commands:" $(wc -l < tools/ubuntu-slim.txt)
+          head -n 20 tools/ubuntu-slim.txt
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-slim-tools
+          path: tools/ubuntu-slim.txt
+
+  compare:
+    needs: [collect-tools-latest, collect-tools-slim]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ubuntu-latest-tools
+          path: latest
+      - uses: actions/download-artifact@v4
+        with:
+          name: ubuntu-slim-tools
+          path: slim
+
+      - name: Compare toolsets
+        run: |
+          echo "=== Comparing tool lists ==="
+          sort -u latest/ubuntu-latest.txt > latest.txt
+          sort -u slim/ubuntu-slim.txt > slim.txt
+          mkdir -p diff
+
+          echo "=== Tools only in ubuntu-latest ===" | tee diff/only-latest.txt
+          comm -23 latest.txt slim.txt | tee -a diff/only-latest.txt
+          echo ""
+          echo "=== Tools only in ubuntu-slim ===" | tee diff/only-slim.txt
+          comm -13 latest.txt slim.txt | tee -a diff/only-slim.txt
+          echo ""
+          echo "=== Tools common to both ===" | tee diff/common.txt
+          comm -12 latest.txt slim.txt | tee -a diff/common.txt
+
+          echo ""
+          echo "Summary:"
+          echo "Only in latest:" $(wc -l < diff/only-latest.txt)
+          echo "Only in slim:" $(wc -l < diff/only-slim.txt)
+          echo "Common:" $(wc -l < diff/common.txt)
+
+      - name: Upload comparison results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-runner-diff
+          path: diff/
   test-docker:
     runs-on: ubuntu-slim  # 軽量ランナーを明示
     timeout-minutes: 10
