@@ -1,0 +1,21 @@
+name: Skip by input
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_job:
+        description: "Run the job?"
+        required: true
+        default: "no"
+        type: choice
+        options:
+          - yes
+          - no
+
+jobs:
+  maybe-run:
+    runs-on: ubuntu-latest
+    if: inputs.run_job == 'yes'
+    steps:
+      - run: echo "Job executed"
+
